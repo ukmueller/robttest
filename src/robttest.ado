@@ -36,7 +36,7 @@ program robttest, eclass sortpreserve
 			di as error "number of independent observations/clusters smaller than 25"
 			exit 499
 		}
-		di "set k = `k' based on number of observations/clusters (`r(sum)')"
+		di as text "Using k = `k' based on number of observations/clusters (`r(sum)')"
 	}
 	
 	matrix WR = J(colsof(b),`k', .) 
