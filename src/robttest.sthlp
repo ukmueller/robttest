@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.0.0 Jul 2020}{...}
+{* *! version 1.0.0 February 2021}{...}
 {title:Title}
 
 {pstd}
@@ -9,26 +9,8 @@
 {title:Syntax}
 
 {p 8 16 2}
-{cmd:robttest} {it:modelspec} [{cmd:,} {it:options}]
+{cmd:robttest} [{cmd:,} {it:options}]
 {p_end}
-
-{phang}
-{it:modelspec} specifies a model estimated by {manhelp regress R:regress},
-{manhelp ivregress R:ivregress}, {manhelp areg R:areg}, {manhelp logit R:logit},
-or {manhelp probit R:probit}, estimated with the standard error option {it:robust} or {it:cluster} (see {manhelp vce_option R:vce option}).
-{it:modelspec} is
-
-                {it:name}{c |}{cmd:.}{c |} {cmd:(}{it:namelist}{cmd:)}
-
-{pmore}
-{it:name} is the name under which estimation results were stored using
-{helpb estimates store:estimates store}, and "{cmd:.}" refers to the last
-estimation results, whether or not these were already stored.
-If {it:modelspec}
-is not specified, the last estimation result is used; this is equivalent to
-specifying {it:modelspec} as "{cmd:.}".
-{p_end}
-
 
 {synoptset 11}{...}
 {synopthdr}
@@ -70,7 +52,7 @@ the test of level 0.5 does not reject.
 {title:Options}
 
 {phang}
-{opt k(#)} overrides default value for {it:k}th order statistic; see {help robttest##mainpaper:Müller (2020)} for details.
+{opt k(#)} overrides default value for {it:k}th order statistic; supported values are 4 and 8 {help robttest##mainpaper:Müller (2020)} for details.
 
 {phang}
 {opt verbose} displays the 2{it:k} extreme terms, in multiples of standard deviation of sum of middle {it:n}-2{it:k} terms.
@@ -81,11 +63,8 @@ the test of level 0.5 does not reject.
 
 {phang}{cmd:. sysuse auto}{p_end}
 {phang}{cmd:. regress mpg weight length, robust}{p_end}
-{phang}{cmd:. estimates store A}{p_end}
 {phang}{cmd:. robttest}{p_end}
-{phang}{cmd:. robttest .}{space 6}(equivalent to above command){p_end}
-{phang}{cmd:. robttest A}{space 6}(equivalent to above command){p_end}
-{phang}{cmd:. robttest, k(6) verbose}{p_end}
+{phang}{cmd:. robttest, k(4) verbose}{p_end}
 
 
 {marker results}{...}
