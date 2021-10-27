@@ -100,9 +100,9 @@ program rtt_setscores, sortpreserve
 	syntax, rtt_sel(name)
 	tempvar e
 	local slist ""
-//	quietly{
-	if(e(cmd)=="regress" | e(cmd)=="areg" | e(cmd)=="logit" | e(cmd)=="probit"){
-		predict `e',sc
+	quietly{
+	if(e(cmd)=="regress" | e(cmd)=="logit" | e(cmd)=="probit"){
+		predict `e' if e(sample),sc
 		local na : colnames e(V)
 		tokenize `na'
 		local i = 1
@@ -110,6 +110,25 @@ program rtt_setscores, sortpreserve
 			capture drop rtt_score`i'
 			if("``i''"=="_cons") gen rtt_score`i'=`e' if e(sample)
 			else gen rtt_score`i'=`e'*``i'' if e(sample)
+			local slist "`slist' rtt_score`i'"
+			local ++i
+		}
+	}
+	else if(e(cmd)=="areg"){
+		predict `e' if e(sample),sc
+		sort `e(absvar)'
+		local na : colnames e(V)
+		tokenize `na'
+		local i = 1
+		while "``i''" != "" {
+			capture drop rtt_score`i'
+			if("``i''"=="_cons") gen rtt_score`i'=`e' if e(sample)
+			else{
+				tempvar x
+				by `e(absvar)': egen `x'=mean(``i'') if e(sample)
+				sum  ``i'' if e(sample)			
+				gen rtt_score`i'=`e'*(``i''-`x'+`r(mean)') if e(sample)
+			}
 			local slist "`slist' rtt_score`i'"
 			local ++i
 		}
@@ -145,7 +164,9 @@ program rtt_setscores, sortpreserve
 	if( "`e(clustvar)'"=="") qui replace `rtt_sel'=1 if e(sample)
 	else{
 		tempvar TotScore
-		sort `e(clustvar)'
+		tempvar es
+		gen `es'=0 if e(sample)
+		sort `e(clustvar)' `es'
 		local i = 1
 		while "``i''" != ""{
 			capture drop `TotScore'
@@ -155,22 +176,30 @@ program rtt_setscores, sortpreserve
 			local ++i
 		}
 	}
-//	}
+	}
 end
 
-capture program drop rtt_analyticV
-program rtt_analyticV
-	syntax, rtt_sel(name)
-	qui corr rtt_score* if `rtt_sel'==1, cov 
-	tempname V
-	mat `V'=r(N)*rtt_Bread*r(C)*rtt_Bread'
-	mat list `V'
-	mat list e(V)
+capture program drop analyticV
+program analyticV
+// compares stata covariance matrix with covariance matrix implied by scores and sandwich formula
+// should return values close to one or something is wrong
+    matrix rtt_Bread=e(V_modelbased)
+    if( rtt_Bread[1,1]==.) {
+        disp as text "e(V_modelbased) missing; aborting"
+        exit(999)
+    }   
+    tempvar rtt_sel
+    rtt_setscores, rtt_sel(`rtt_sel')
+    qui corr rtt_score* if `rtt_sel' == 1, cov
+    tempname V
+    mat `V'= r(N)*rtt_Bread*r(C)*rtt_Bread'
+	di "number of terms in score:", r(N)
 	mata Vx=st_matrix("`V'")
 	mata V=st_matrix("e(V)")
-	mata Vx:/V
-//	end
-end program
+	di "ratio of STATA covariance matrix and standard Sandwich formula for first 10 elements"
+	mata Vx=Vx:/V
+	mata Vx[1::min((10,cols(Vx))),1::min((10,cols(Vx)))]
+end
 
 
 findfile "heavymeanmata.do"
