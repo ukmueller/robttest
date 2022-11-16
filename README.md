@@ -13,7 +13,7 @@ It is implemented as a postestimation command that can be used after the STATA c
 // Remove program if it existed previously
 cap ado uninstall robttest
 // Install most up-to-date version
-net install robttest, from("https://raw.githubusercontent.com/acarril/robttest/master/src")
+net install robttest, from("https://raw.githubusercontent.com/ukmueller/robttest/master/src")
 ```
 
 # References

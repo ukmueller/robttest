@@ -92,13 +92,15 @@ Additionally, {cmd:robttest} preserves all macros and scalars of the estimated m
 {title:Authors}
 
 {pstd}
+Ulrich K. Müller (maintainer){break}
+Princeton University{break}
+umueller@princeton.edu
+
+{pstd}
 Álvaro Carril (maintainer){break}
 Princeton University{break}
 acarril@princeton.edu
 
-{pstd}
-Ulrich K. Müller{break}
-Princeton University{break}
 
 
 {marker disclaimer}{...}
@@ -106,7 +108,7 @@ Princeton University{break}
 
 {pstd}
 This software is provided "as is", without warranty of any kind.
-If you have suggestions or want to report problems, please create a new issue in the {browse "https://github.com/acarril/robttest/issues":project repository} or contact the project maintainer.
+If you have suggestions or want to report problems, please create a new issue in the {browse "https://github.com/ukmueller/robttest/issues":project repository} or contact the project maintainer.
 All remaining errors are our own.
 
 
